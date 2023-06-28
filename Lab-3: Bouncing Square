@@ -1,0 +1,54 @@
+#include <GL/glut.h>
+
+int x_max=600, y_max=700;
+int x_position=0, y_position=0;
+int x_stepsize=10, y_stepsize=10;
+int height=100, width=100;
+
+
+void BouncingSquare1(){
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glColor3d(1,0,0);
+    glBegin(GL_POLYGON);
+        glVertex2d(x_position, y_position);
+        glVertex2d(x_position+width, y_position);
+        glVertex2d(x_position+width, y_position+height);
+        glVertex2d(x_position, y_position+height);
+    glEnd();
+    glFlush();
+}
+
+void update(int value){
+    x_position= x_position+x_stepsize;
+    y_position= y_position+y_stepsize;
+
+    if(x_position+width>=x_max || x_position<0){
+        x_stepsize= -x_stepsize;
+    }
+    if(y_position+height>=y_max || y_position<0){
+        y_stepsize= -y_stepsize;
+    }
+    glutPostRedisplay();
+    glutTimerFunc(16, update, 0); // 60 FPS (1000ms/60 ≈ 16ms)
+}
+
+int main(int argC, char *argV[]){
+    glutInit(&argC, argV);
+    glutInitWindowSize(600, 700);
+    glutInitWindowPosition(100, 100);
+    glutInitDisplayMode(GLUT_RGB| GLUT_SINGLE);
+
+    glutCreateWindow("GRAPHICS");
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        gluOrtho2D(0,600,0,700);
+        glMatrixMode(GL_MODELVIEW);
+
+        glutDisplayFunc(BouncingSquare1);
+        glutTimerFunc(0, update, 0);
+    glutMainLoop();
+
+    return 0;
+}
+
